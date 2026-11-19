@@ -32,6 +32,8 @@ The API authenticates with a JWT bearer token that the web app receives when you
 4. Open any request to `api.ohmywishes.com` and look at its **request URL** — it carries `?token=eyJ...`
 5. Copy the value after `token=` (the token is a JWT, three dot-separated parts)
 
+6. You do not have to wire it up by hand: if your agent has terminal access (Hermes, Claude Code and alike), just paste the token into the chat and ask it to configure the server — it will create the file, set `600` and verify access with `omw_whoami`. **Know the trade-off:** the message stays in the chat history and may end up in the model provider's logs. If that bothers you, rotate the token after setup (log out and log in again) — the leaked one stops working — and write the new one into the file yourself.
+
 Store it where the server can read it:
 
 ```bash
@@ -42,7 +44,7 @@ chmod 600 ~/.config/ohmywishes/token
 
 Or pass it through the environment: `OMW_TOKEN=... python3 server.py`.
 
-> The token grants full access to your account and lives about a year. Treat it as a password: never commit it, never paste it into chats, `chmod 600` the file.
+> The token grants full access to your account and lives about a year. Treat it as a password: never commit it, never publish it, `chmod 600` the file. Handing the token to an agent in chat is the quick path, not the safest one — chat history and provider logs remain.
 
 ## Install and run
 
