@@ -1,64 +1,64 @@
 # ohmywishes-mcp
 
-An MCP (Model Context Protocol) server for [ohmywishes.com](https://ohmywishes.com) — wish lists and gift wishes — so an AI agent can read and manage your wishlists: create wishes, attach photos, group them into lists, reserve gifts on other people's lists.
+MCP-сервер (Model Context Protocol) для [ohmywishes.com](https://ohmywishes.com) — вишлистов и желаний. Даёт ИИ-агенту доступ к вашим спискам: создать желание, прикрепить фото, разложить по спискам, забронировать подарок в чужом вишлисте.
 
-Single file, Python standard library only, no dependencies.
+Один файл, только стандартная библиотека Python, без зависимостей.
 
-> **Unofficial.** This talks to the public web API of the service (`api.ohmywishes.com`). The API is not formally documented, so endpoints and fields may change without notice. Not affiliated with or endorsed by ohmywishes.
+> **Неофициальный.** Сервер работает с публичным веб-API сервиса (`api.ohmywishes.com`). API не имеет формальной документации, поэтому эндпоинты и поля могут измениться без предупреждения. Проект не связан с ohmywishes и не поддерживается ими.
 
-## Features
+## Возможности
 
-- **14 tools** over stdio MCP: whoami, lists, wishes, pictures, reservations, plus a raw `omw_api` escape hatch for anything not covered
-- **Safe updates**: `omw_update_wish` / `omw_update_wishlist` read the object first, merge your fields and only then send the full `PUT` the API requires — otherwise the API silently wipes fields you did not resend
-- **No dependencies, no install step**: `python3 server.py`
-- Works with any MCP client: Hermes, Claude Desktop, Cursor, custom clients
+- **14 инструментов** по stdio: профиль, списки, желания, фото, брони, плюс сырой `omw_api` — вызов любого эндпоинта, если готового инструмента не хватает
+- **Безопасное обновление**: `omw_update_wish` и `omw_update_wishlist` сначала читают объект, накладывают ваши поля и только потом отправляют полный `PUT`, которого требует API. Иначе сервис молча стирает всё, что вы не передали
+- **Без зависимостей и установки**: `python3 server.py`
+- Подходит любому MCP-клиенту: Hermes, Claude Desktop, Cursor, собственные клиенты
 
-## Requirements
+## Требования
 
 - Python 3.9+
-- An ohmywishes account
+- Аккаунт на ohmywishes.com
 
-## Getting a token
+## Как получить токен
 
-The API authenticates with a JWT bearer token that the web app receives when you log in.
+API авторизуется JWT-токеном, который веб-приложение получает при входе.
 
-1. Log in at <https://ohmywishes.com>
-2. Open DevTools (`F12`) → **Network**
-3. Keep the panel open, tick **Preserve log**, reload the page, and click through a list or the profile menu
-4. Open any request to `api.ohmywishes.com` and look at its **request URL** — it carries `?token=eyJ...`
-5. Copy the value after `token=` (the token is a JWT, three dot-separated parts)
+1. Войдите на <https://ohmywishes.com>
+2. Откройте DevTools (`F12`) → вкладка **Network** (Сеть)
+3. Не закрывая панель, включите **Preserve log** (Сохранять журнал), перезагрузите страницу и полистайте список или меню профиля
+4. Откройте любой запрос к `api.ohmywishes.com` и посмотрите его **URL** — в нём будет `?token=eyJ...`
+5. Скопируйте значение после `token=` (это JWT из трёх частей через точку)
 
-Store it where the server can read it:
+Положите токен туда, откуда сервер его прочитает:
 
 ```bash
 mkdir -p ~/.config/ohmywishes
-printf '%s' 'PASTE_TOKEN_HERE' > ~/.config/ohmywishes/token
+printf '%s' 'ВСТАВЬТЕ_ТОКЕН' > ~/.config/ohmywishes/token
 chmod 600 ~/.config/ohmywishes/token
 ```
 
-Or pass it through the environment: `OMW_TOKEN=... python3 server.py`.
+Или передайте через переменную окружения: `OMW_TOKEN=... python3 server.py`.
 
-> The token grants full access to your account and lives about a year. Treat it as a password: never commit it, never paste it into chats, `chmod 600` the file.
+> Токен даёт полный доступ к аккаунту и живёт около года. Относитесь к нему как к паролю: не коммитьте, не вставляйте в чаты, ставьте `chmod 600`.
 
-## Install and run
+## Установка и запуск
 
 ```bash
 git clone https://github.com/demoniksem/ohmywishes-mcp.git
 cd ohmywishes-mcp
-python3 server.py --help          # check the token is found
-python3 server.py                 # stdio MCP server (blocks, waiting for JSON-RPC)
+python3 server.py --help          # проверить, что токен найден
+python3 server.py                 # stdio MCP-сервер (ждёт JSON-RPC на stdin)
 ```
 
-Environment variables:
+Переменные окружения:
 
-| Variable | Default | Meaning |
+| Переменная | По умолчанию | Назначение |
 |---|---|---|
-| `OMW_TOKEN` | — | JWT; takes priority over the file |
-| `OMW_TOKEN_FILE` | `~/.config/ohmywishes/token` | File with the JWT |
-| `OMW_BASE_URL` | `https://api.ohmywishes.com` | API base URL |
-| `OMW_TIMEOUT` | `60` | HTTP timeout, seconds |
+| `OMW_TOKEN` | — | JWT, приоритетнее файла |
+| `OMW_TOKEN_FILE` | `~/.config/ohmywishes/token` | Файл с JWT |
+| `OMW_BASE_URL` | `https://api.ohmywishes.com` | Базовый URL API |
+| `OMW_TIMEOUT` | `60` | Таймаут HTTP, секунды |
 
-## Client configuration
+## Настройка клиента
 
 **Hermes** (`~/.hermes/config.yaml`):
 
@@ -67,11 +67,11 @@ mcp_servers:
   ohmywishes:
     command: python3
     args:
-      - /absolute/path/to/ohmywishes-mcp/server.py
+      - /абсолютный/путь/до/ohmywishes-mcp/server.py
     enabled: true
 ```
 
-Or let the CLI do it: `hermes mcp add ohmywishes --command python3 --args /absolute/path/to/server.py`
+Или через CLI: `hermes mcp add ohmywishes --command python3 --args /абсолютный/путь/до/server.py`
 
 **Claude Desktop** (`claude_desktop_config.json`):
 
@@ -80,53 +80,57 @@ Or let the CLI do it: `hermes mcp add ohmywishes --command python3 --args /absol
   "mcpServers": {
     "ohmywishes": {
       "command": "python3",
-      "args": ["/absolute/path/to/ohmywishes-mcp/server.py"]
+      "args": ["/абсолютный/путь/до/ohmywishes-mcp/server.py"]
     }
   }
 }
 ```
 
-Ready-to-copy files: [`examples/hermes-config.yaml`](examples/hermes-config.yaml), [`examples/claude-desktop.json`](examples/claude-desktop.json).
+Готовые файлы: [`examples/hermes-config.yaml`](examples/hermes-config.yaml), [`examples/claude-desktop.json`](examples/claude-desktop.json).
 
-## Tools
+## Инструменты
 
-| Tool | What it does |
+| Инструмент | Что делает |
 |---|---|
-| `omw_whoami` | Current account: id, username, counters. Token smoke test |
-| `omw_list_wishlists` | Own wish lists with visibility and wish count |
-| `omw_list_wishes` | Paged own wishes: `all`, `private`, `reserved`, `fulfilled` |
-| `omw_get_wish` | One wish by id (price, link, photos, list membership, reservation flags) |
-| `omw_create_wish` | Create a wish: `title` required, optional `private`, `description`, `price`, `currency`, `link`, `wish_lists` |
-| `omw_update_wish` | Merge-and-update a wish without wiping fields |
-| `omw_delete_wish` | Delete a wish |
-| `omw_set_wish_picture` | Upload a local image file as the wish photo |
-| `omw_create_wishlist` | Create a list: `title` required, `visibility` = `inherit` / `private` / `followers` |
-| `omw_update_wishlist` | Merge-and-update a list |
-| `omw_delete_wishlist` | Delete a list |
-| `omw_reserve_wish` | Reserve somebody's wish (the owner sees it as taken) |
-| `omw_unreserve_wish` | Cancel your reservation |
-| `omw_api` | Raw call: any method + path under `/api/v2` or `/api/v3` |
+| `omw_whoami` | Текущий аккаунт: id, username, счётчики. Быстрая проверка токена |
+| `omw_list_wishlists` | Свои списки желаний с видимостью и количеством желаний |
+| `omw_list_wishes` | Свои желания с пагинацией: `all`, `private`, `reserved`, `fulfilled` |
+| `omw_get_wish` | Одно желание по id (цена, ссылка, фото, привязка к спискам, флаги брони) |
+| `omw_create_wish` | Создать желание: обязателен `title`, опционально `private`, `description`, `price`, `currency`, `link`, `wish_lists` |
+| `omw_update_wish` | Обновить желание, не затирая остальные поля |
+| `omw_delete_wish` | Удалить желание |
+| `omw_set_wish_picture` | Загрузить локальный файл как фото желания |
+| `omw_create_wishlist` | Создать список: обязателен `title`, `visibility` = `inherit` / `private` / `followers` |
+| `omw_update_wishlist` | Обновить список, не затирая остальные поля |
+| `omw_delete_wishlist` | Удалить список |
+| `omw_reserve_wish` | Забронировать чужое желание (владелец увидит, что оно занято) |
+| `omw_unreserve_wish` | Снять свою бронь |
+| `omw_api` | Сырой запрос: любой метод и путь под `/api/v2` или `/api/v3` |
 
-## API notes worth knowing
+## Особенности API, которые стоит знать
 
-Collected while mapping the API; they explain most surprises:
+Собрано при разборе API — объясняет большую часть сюрпризов:
 
-- **The token is accepted only as a query parameter** (`?token=...`). An `Authorization: Bearer` header is rejected with `403 security.invalid_access_token`, cookies and `X-Token` variants give `401`.
-- **`PUT` on a wish replaces the whole object.** If you omit `wish_lists`, the wish is detached from its lists. That is why the `omw_update_*` tools exist.
-- **Wish visibility is derived from the `private` boolean**; a `visibility` field on a wish is ignored.
-- **Wish-list visibility is its own enum**: `inherit`, `private`, `followers`. Values like `public` or `link` return 400.
-- **Unknown fields are ignored silently**, not rejected — a typo looks like "the field does nothing".
-- **Links get `?utm_source=ohmywishes` appended** by the server.
-- **`price` is a plain number**; the currency lives in a separate field (34 currencies, `RUB` by default).
-- **You cannot reserve your own wish** (400).
-- Responses use two shapes: bare arrays for wish listings, `{"items": [...]}` / `{"item": {...}}` elsewhere.
+- **Токен принимается только как query-параметр** (`?token=...`). Заголовок `Authorization: Bearer` отбивается с `403 security.invalid_access_token`, cookie и варианты `X-Token` дают `401`.
+- **`PUT` по желанию заменяет объект целиком.** Если не передать `wish_lists`, желание отвяжется от списков. Ради этого и сделаны инструменты `omw_update_*`.
+- **Видимость желания выводится из флага `private`**; поле `visibility` у желания игнорируется.
+- **У видимости списков своё перечисление**: `inherit`, `private`, `followers`. Значения вроде `public` или `link` возвращают 400.
+- **Неизвестные поля молча игнорируются**, а не отбиваются ошибкой — опечатка выглядит как «поле ничего не делает».
+- **К ссылкам сервис дописывает `?utm_source=ohmywishes`**.
+- **`price` — просто число**, валюта лежит отдельным полем (34 валюты, по умолчанию `RUB`).
+- **Своё желание забронировать нельзя** (400).
+- Ответы бывают двух форм: голый массив для списков желаний и `{"items": [...]}` / `{"item": {...}}` в остальных местах.
 
-## Security
+## Безопасность
 
-- The server never logs the token and sends it only to `api.ohmywishes.com`.
-- All writes go through the account that owns the token — there is no dry-run mode.
-- Test objects you create are real: clean them up (`omw_delete_wish`, `omw_delete_wishlist`).
+- Сервер не логирует токен и отправляет его только на `api.ohmywishes.com`.
+- Все записи идут от аккаунта-владельца токена — режима «только чтение» или dry-run нет.
+- Тестовые объекты создаются по-настоящему: убирайте их через `omw_delete_wish` и `omw_delete_wishlist`.
 
-## License
+## Лицензия
 
-MIT — see [LICENSE](LICENSE).
+MIT — см. [LICENSE](LICENSE).
+
+---
+
+English version: [README.en.md](README.en.md)
