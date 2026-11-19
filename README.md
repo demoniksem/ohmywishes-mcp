@@ -1,5 +1,7 @@
 # ohmywishes-mcp
 
+[![CI](https://github.com/demoniksem/ohmywishes-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/demoniksem/ohmywishes-mcp/actions/workflows/ci.yml)
+
 MCP-сервер (Model Context Protocol) для [ohmywishes.com](https://ohmywishes.com) — вишлистов и желаний. Даёт ИИ-агенту доступ к вашим спискам: создать желание, прикрепить фото, разложить по спискам, забронировать подарок в чужом вишлисте.
 
 Один файл, только стандартная библиотека Python, без зависимостей.

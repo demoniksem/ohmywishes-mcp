@@ -1,0 +1,12 @@
+# Ruff configuration for ohmywishes-mcp.
+# Kept explicit so local runs and CI agree.
+line-length = 120
+target-version = "py39"
+
+[lint]
+select = ["E", "F", "W", "I", "B", "SIM", "PIE"]
+# Long lines are fine: tool descriptions and README snippets read better unwrapped.
+ignore = ["E501"]
+
+[lint.isort]
+combine-as-imports = true

@@ -62,7 +62,7 @@ def api(method, path, body=None, query=None):
         raw = e.read().decode("utf-8", "replace")
         try:
             payload = json.loads(raw)
-        except Exception:
+        except ValueError:  # non-JSON error page
             payload = raw[:2000]
         return {"status": e.code, "body": payload,
                 "error": "unauthorized" if e.code == 401 else "http_error"}
@@ -108,7 +108,7 @@ def api_upload(path, file_path, field="picture", extra_query=None):
         raw = e.read().decode("utf-8", "replace")
         try:
             payload = json.loads(raw)
-        except Exception:
+        except ValueError:  # non-JSON error page
             payload = raw[:2000]
         return {"status": e.code, "body": payload, "error": "http_error"}
     except urllib.error.URLError as e:
@@ -136,7 +136,8 @@ def text_result(obj, is_error=False):
 
 
 def pick(args, key, default=UNSET):
-    return args[key] if key in args else default
+    """Return args[key] when the client sent the key, else default (UNSET = absent)."""
+    return args.get(key, default)
 
 
 TOOLS = [
@@ -377,7 +378,7 @@ def call_tool(name, args):
         return res(api("DELETE", f"/api/v3/wishes/{args['wish_id']}/reservation"))
     if name == "omw_api":
         path = str(args.get("path", ""))
-        if not (path.startswith("/api/v2") or path.startswith("/api/v3")):
+        if not path.startswith(("/api/v2", "/api/v3")):
             return text_result({"error": "path must start with /api/v2 or /api/v3"}, True)
         return res(api(args.get("method", "GET"), path, body=args.get("body"), query=args.get("query")))
     return text_result({"error": f"unknown tool {name}"}, True)
@@ -425,7 +426,7 @@ def main():
                 result = call_tool(name, args)
             except KeyError as e:
                 result = text_result({"error": "missing_argument", "detail": str(e)}, True)
-            except Exception as e:  # never kill the server on a tool error
+            except Exception as e:  # noqa: BLE001 — never kill the server on a tool error
                 result = text_result({"error": "exception", "detail": repr(e)}, True)
             send({"jsonrpc": "2.0", "id": rid, "result": result})
         elif rid is not None:

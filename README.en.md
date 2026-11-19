@@ -1,5 +1,7 @@
 # ohmywishes-mcp
 
+[![CI](https://github.com/demoniksem/ohmywishes-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/demoniksem/ohmywishes-mcp/actions/workflows/ci.yml)
+
 *Русская версия: [README.md](README.md)*
 
 An MCP (Model Context Protocol) server for [ohmywishes.com](https://ohmywishes.com) — wish lists and gift wishes — so an AI agent can read and manage your wishlists: create wishes, attach photos, group them into lists, reserve gifts on other people's lists.
