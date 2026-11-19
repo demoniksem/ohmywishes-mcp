@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "ohmywishes": {
+      "command": "python3",
+      "args": ["/absolute/path/to/ohmywishes-mcp/server.py"]
+    }
+  }
+}

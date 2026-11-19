@@ -1,0 +1,8 @@
+# Hermes Agent — ~/.hermes/config.yaml
+# Replace the path with the absolute path to server.py on your machine.
+mcp_servers:
+  ohmywishes:
+    command: python3
+    args:
+      - /absolute/path/to/ohmywishes-mcp/server.py
+    enabled: true
