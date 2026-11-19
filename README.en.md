@@ -19,7 +19,7 @@ Single file, Python standard library only, no dependencies.
 
 ## Requirements
 
-- Python 3.9+
+- Python 3.10+
 - An ohmywishes account
 
 ## Getting a token

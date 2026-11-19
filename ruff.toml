@@ -1,7 +1,7 @@
 # Ruff configuration for ohmywishes-mcp.
 # Kept explicit so local runs and CI agree.
 line-length = 120
-target-version = "py39"
+target-version = "py310"
 
 [lint]
 select = ["E", "F", "W", "I", "B", "SIM", "PIE"]

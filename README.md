@@ -17,7 +17,7 @@ MCP-сервер (Model Context Protocol) для [ohmywishes.com](https://ohmywi
 
 ## Требования
 
-- Python 3.9+
+- Python 3.10+
 - Аккаунт на ohmywishes.com
 
 ## Как получить токен
